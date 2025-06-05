@@ -24,7 +24,7 @@ function renderConversation() {
   conv.forEach(msg => {
     const div = document.createElement('div');
     div.className = 'message ' + msg.role;
-    const label = msg.role === 'user' ? 'You said:' : 'Chatgpt said:';
+    const label = msg.role === 'user' ? 'I said:' : 'Chatgpt said:';
     div.textContent = label + '\n' + msg.content;
     chat.appendChild(div);
   });
