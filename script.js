@@ -24,7 +24,8 @@ function renderConversation() {
   conv.forEach(msg => {
     const div = document.createElement('div');
     div.className = 'message ' + msg.role;
-    div.textContent = msg.role + ': ' + msg.content;
+    const label = msg.role === 'user' ? 'You said:' : 'Chatgpt said:';
+    div.textContent = label + ' ' + msg.content;
     chat.appendChild(div);
   });
   chat.scrollTop = chat.scrollHeight;
