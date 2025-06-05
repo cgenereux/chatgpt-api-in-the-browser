@@ -1,8 +1,11 @@
 function loadSettings() {
   const key = localStorage.getItem('apiKey');
   if (key) document.getElementById('apiKey').value = key;
-  const model = localStorage.getItem('model');
-  if (model) document.getElementById('model').value = model;
+
+  const stored = localStorage.getItem('model');
+  const allowed = ['o3', 'gpt-4.5-preview'];
+  const model = allowed.includes(stored) ? stored : 'o3';
+  document.getElementById('model').value = model;
 }
 
 function loadConversation() {
