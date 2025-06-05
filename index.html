@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ChatGPT API in the Browser</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 1em; }
+    #chat { border: 1px solid #ccc; padding: 1em; height: 400px; overflow-y: auto; margin-bottom: 1em; }
+    .message { margin-bottom: 1em; }
+    .user { color: blue; }
+    .assistant { color: green; }
+    textarea { width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>ChatGPT API in the Browser</h1>
+  <div>
+    <label>API Key: <input type="password" id="apiKey"></label>
+    <button id="saveKey">Save</button>
+  </div>
+  <div>
+    <label>Model:
+      <select id="model">
+        <option value="o3">o3</option>
+        <option value="gpt-4.5-preview">gpt-4.5-preview</option>
+      </select>
+    </label>
+  </div>
+  <div id="chat"></div>
+  <textarea id="userInput" rows="3" placeholder="Type your message..."></textarea>
+  <div>
+    <button id="send">Send</button>
+    <button id="clear">Clear</button>
+    <button id="download">Download Conversation</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
