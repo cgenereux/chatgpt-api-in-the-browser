@@ -32,42 +32,42 @@ function renderConversation() {
 }
 
 async function sendMessage() {
-  const apiKey = document.getElementById('apiKey').value.trim();
-  if (!apiKey) {
-    alert('Please set your API key.');
-    return;
-  }
-  const model = document.getElementById('model').value;
-  localStorage.setItem('apiKey', apiKey);
-  localStorage.setItem('model', model);
+    // ... (setup code omitted for brevity)
 
-  const content = document.getElementById('userInput').value.trim();
-  if (!content) return;
-  const conv = loadConversation();
-  conv.push({ role: 'user', content });
-  document.getElementById('userInput').value = '';
-  saveConversation(conv);
-  renderConversation();
+    let endpoint, body;
+    if (model === 'o3-pro') {
+        // Use Responses API for o3-pro (completions style prompt)
+        const prompt = conv.map(m => 
+            (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.content
+        ).join('\n') + '\nAssistant: ';
+        endpoint = 'https://api.openai.com/v1/responses';
+        body = {
+            model: 'o3-pro',
+            prompt: prompt,
+            max_tokens: 512,
+            temperature: 0.7
+        };
+    } else {
+        // Use Chat Completions API for other models
+        endpoint = 'https://api.openai.com/v1/chat/completions';
+        body = {
+            model: model,
+            messages: conv   // conversation array
+        };
+    }
 
-  let endpoint, body;
-  if (model === 'o3-pro') {
-    // Use completions-style endpoint
-    const prompt = conv.map(m => (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.content).join('\n') + '\nAssistant: ';
-    endpoint = 'https://api.openai.com/v1/responses';
-    body = {
-      model,
-      prompt,
-      max_tokens: 512,
-      temperature: 0.7
-    };
-  } else {
-    // Use chat-style endpoint
-    endpoint = 'https://api.openai.com/v1/chat/completions';
-    body = {
-      model,
-      messages: conv
-    };
-  }
+    const res = await fetch(endpoint, { method: 'POST', headers: { ... }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.error) {
+        alert(data.error.message);
+        return;
+    }
+    // Extract the assistant reply from the response:
+    const reply = (model === 'o3-pro') 
+        ? data.choices[0].text 
+        : data.choices[0].message.content;
+    // ... (save and render reply)
+}
 
   const res = await fetch(endpoint, {
     method: 'POST',
