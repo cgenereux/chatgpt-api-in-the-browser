@@ -24,7 +24,7 @@ function renderConversation() {
   conv.forEach(msg => {
     const div = document.createElement('div');
     div.className = 'message ' + msg.role;
-    const label = msg.role === 'user' ? 'I said:' : 'Chatgpt said:';
+    const label = msg.role === 'user' ? 'I said:' : 'ChatGPT said:';
     div.textContent = label + '\n' + msg.content;
     chat.appendChild(div);
   });
@@ -41,31 +41,52 @@ async function sendMessage() {
   localStorage.setItem('apiKey', apiKey);
   localStorage.setItem('model', model);
 
-  const conv = loadConversation();
   const content = document.getElementById('userInput').value.trim();
   if (!content) return;
+  const conv = loadConversation();
   conv.push({ role: 'user', content });
   document.getElementById('userInput').value = '';
-  renderConversation();
   saveConversation(conv);
+  renderConversation();
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  let endpoint, body;
+  if (model === 'o3-pro') {
+    // Use completions-style endpoint
+    const prompt = conv.map(m => (m.role === 'user' ? 'User: ' : 'Assistant: ') + m.content).join('\n') + '\nAssistant: ';
+    endpoint = 'https://api.openai.com/v1/responses';
+    body = {
+      model,
+      prompt,
+      max_tokens: 512,
+      temperature: 0.7
+    };
+  } else {
+    // Use chat-style endpoint
+    endpoint = 'https://api.openai.com/v1/chat/completions';
+    body = {
+      model,
+      messages: conv
+    };
+  }
+
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + apiKey
     },
-    body: JSON.stringify({
-      model,
-      messages: conv
-    })
+    body: JSON.stringify(body)
   });
   const data = await res.json();
   if (data.error) {
     alert(data.error.message);
     return;
   }
-  const reply = data.choices[0].message.content;
+
+  const reply = model === 'o3-pro'
+    ? data.choices[0].text
+    : data.choices[0].message.content;
+
   conv.push({ role: 'assistant', content: reply });
   saveConversation(conv);
   renderConversation();
@@ -93,9 +114,7 @@ document.getElementById('saveKey').addEventListener('click', () => {
 });
 
 document.getElementById('send').addEventListener('click', sendMessage);
-
 document.getElementById('clear').addEventListener('click', clearConversation);
-
 document.getElementById('download').addEventListener('click', downloadConversation);
 
 loadSettings();
