@@ -1,4 +1,4 @@
-# ChatGPT API in the Browser
+# ChatGPT API in the Browser (With o3-pro)
 
 This project provides a simple web interface for talking to OpenAI's models using your own API key. The page stores your key and conversation history in your browser's `localStorage` so it persists between visits.
 
