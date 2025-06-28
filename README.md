@@ -7,5 +7,5 @@ This project provides a simple web interface for talking to OpenAI's models usin
 1. Open `index.html` in a modern web browser.
 2. Enter your OpenAI API key.
 3. Choose `o3`, `o3-pro`, or `gpt-4.5-preview`.
-4. Resize the textbox to your liking
+4. Resize the textbox to your liking.
 5. Download your conversations with the download button.
